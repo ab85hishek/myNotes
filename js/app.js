@@ -6,7 +6,15 @@ let addBtn = document.getElementById('addBtn');
 addBtn.addEventListener('click', function (e) {
 
     let addTxt = document.getElementById('addTxt');
+    let addTitle = document.getElementById('notetitle');
     let notes = localStorage.getItem('notes');
+    let titles = localStorage.getItem('titles');
+
+    if(titles == null){
+        titleObj = [];
+    }else{
+        titleObj = JSON.parse(titles);
+    }
 
     if (notes == null) {
         notesObj = [];
@@ -14,10 +22,13 @@ addBtn.addEventListener('click', function (e) {
     else {
         notesObj = JSON.parse(notes);
     }
-
     notesObj.push(addTxt.value);
+    titleObj.push(addTitle.value);
+
     localStorage.setItem('notes', JSON.stringify(notesObj));
+    localStorage.setItem('titles', JSON.stringify(titleObj));
     addTxt.value = "";
+    addTitle.value = "";
 
     // console.log(notesObj);
     showNotes();
@@ -28,18 +39,29 @@ addBtn.addEventListener('click', function (e) {
 
 function showNotes() {
     let notes = localStorage.getItem('notes');
+    let titles = localStorage.getItem('titles');
+
+    if(titles == null){
+        titleObj = [];
+    }else{
+        titleObj = JSON.parse(titles);
+    }
+
+
     if (notes == null) {
         notesObj = [];
     }
     else {
         notesObj = JSON.parse(notes);
     }
+
     let html = "";
     notesObj.forEach(function (element, index) {
         html += `
         <div class="noteCard card my-2 mx-2" style="width: 18rem;" >
         <div class="card-body">
-          <h5 class="card-title">Note ${index + 1}</h5>
+          <h5 class="card-title">${titleObj[index]}</h5>
+          <hr>
           <p class="card-text">${element}</p>
           <button id="${index}" onclick="deleteNote(this.id)" class="btn btn-primary">Delete Note</button>
         </div>
@@ -60,6 +82,15 @@ function showNotes() {
 function deleteNote(index) {
 
     let notes = localStorage.getItem('notes');
+
+    let titles = localStorage.getItem('titles');
+
+    if(titles == null){
+        titleObj = [];
+    }else{
+        titleObj = JSON.parse(titles);
+    }
+
     if (notes == null) {
         notesObj = [];
     }
@@ -68,7 +99,9 @@ function deleteNote(index) {
     }
 
     notesObj.splice(index, 1);
+    titleObj.splice(index, 1);
     localStorage.setItem('notes', JSON.stringify(notesObj));
+    localStorage.setItem('titles', JSON.stringify(titleObj));
     showNotes();
 
 };
@@ -84,16 +117,16 @@ search.addEventListener('input', function () {
     let noteCards = document.getElementsByClassName('noteCard');
 
 
-        Array.from(noteCards).forEach(function(element){
-            let cardTxt = element.getElementsByTagName("p")[0].innerText;
-            // console.log(cardTxt);
-            if(cardTxt.includes(inpValue)){
-                element.style.display = "block";
-            }else{
-                element.style.display = "none";
+    Array.from(noteCards).forEach(function (element) {
+        let cardTxt = element.getElementsByTagName("p")[0].innerText;
+        // console.log(cardTxt);
+        if (cardTxt.includes(inpValue)) {
+            element.style.display = "block";
+        } else {
+            element.style.display = "none";
 
-            }
-        });
+        }
+    });
 });
 
 
